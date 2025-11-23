@@ -1,85 +1,63 @@
-import { NextResponse } from 'next/server';
-import { AccessToken, type AccessTokenOptions, type VideoGrant } from 'livekit-server-sdk';
-import { RoomConfiguration } from '@livekit/protocol';
-
-type ConnectionDetails = {
-  serverUrl: string;
-  roomName: string;
-  participantName: string;
-  participantToken: string;
-};
-
-// Use NEXT_PUBLIC_ vars for frontend
-const API_KEY = process.env.NEXT_PUBLIC_LIVEKIT_API_KEY;
-const API_SECRET = process.env.NEXT_PUBLIC_LIVEKIT_API_SECRET;
-const LIVEKIT_URL = process.env.NEXT_PUBLIC_LIVEKIT_URL;
+import { NextResponse } from "next/server";
+import { AccessToken } from "livekit-server-sdk";
+import { RoomConfiguration } from "@livekit/protocol";
 
 export const revalidate = 0;
 
+// Server-side env vars
+const LIVEKIT_URL = process.env.LIVEKIT_URL;
+const API_KEY = process.env.LIVEKIT_API_KEY;
+const API_SECRET = process.env.LIVEKIT_API_SECRET;
+
 export async function POST(req: Request) {
   try {
-    if (!LIVEKIT_URL) throw new Error('LIVEKIT_URL is not defined');
-    if (!API_KEY) throw new Error('LIVEKIT_API_KEY is not defined');
-    if (!API_SECRET) throw new Error('LIVEKIT_API_SECRET is not defined');
+    if (!LIVEKIT_URL) throw new Error("LIVEKIT_URL is not defined");
+    if (!API_KEY) throw new Error("LIVEKIT_API_KEY is not defined");
+    if (!API_SECRET) throw new Error("LIVEKIT_API_SECRET is not defined");
 
-    // Parse request body
     const body = await req.json();
-    const agentName: string = body?.room_config?.agents?.[0]?.agent_name;
 
-    // Generate room + token
-    const participantName = 'user';
-    const participantIdentity = `voice_assistant_user_${Math.floor(Math.random() * 10000)}`;
-    const roomName = `voice_assistant_room_${Math.floor(Math.random() * 10000)}`;
+    // Which agent to use
+    const agentName =
+      body?.room_config?.agents?.[0]?.agent_name || "myagent";
 
-    const participantToken = await createParticipantToken(
-      { identity: participantIdentity, name: participantName },
-      roomName,
-      agentName
-    );
+    // Create unique room + identity
+    const roomName = `voice_room_${Math.floor(Math.random() * 100000)}`;
+    const identity = `user_${Math.floor(Math.random() * 100000)}`;
 
-    // Send JSON (browser-safe)
+    // Build LiveKit token
+    const token = new AccessToken(API_KEY, API_SECRET, {
+      identity,
+      name: identity,
+      ttl: "15m",
+    });
+
+    token.addGrant({
+      room: roomName,
+      roomJoin: true,
+      canPublish: true,
+      canPublishData: true,
+      canSubscribe: true,
+    });
+
+    // Attach agent
+    token.roomConfig = new RoomConfiguration({
+      agents: [{ agentName }],
+    });
+
+    const jwt = await token.toJwt();
+
     return NextResponse.json(
       {
         serverUrl: LIVEKIT_URL,
         roomName,
-        participantName,
-        participantToken,
+        participantName: identity,
+        participantToken: jwt,
       },
-      { headers: { 'Cache-Control': 'no-store' } }
+      { headers: { "Cache-Control": "no-store" } }
     );
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    console.error("ERROR IN /api/connection-details:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
-
-function createParticipantToken(
-  userInfo: AccessTokenOptions,
-  roomName: string,
-  agentName?: string
-): Promise<string> {
-  const at = new AccessToken(API_KEY, API_SECRET, {
-    ...userInfo,
-    ttl: '15m',
-  });
-
-  const grant: VideoGrant = {
-    room: roomName,
-    roomJoin: true,
-    canPublish: true,
-    canPublishData: true,
-    canSubscribe: true,
-  };
-  at.addGrant(grant);
-
-  if (agentName) {
-    at.roomConfig = new RoomConfiguration({
-      agents: [{ agentName }],
-    });
-  }
-
-  return at.toJwt();
 }

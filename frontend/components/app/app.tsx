@@ -10,7 +10,7 @@ interface AppProps {
   appConfig: AppConfig;
 }
 
-export function App({ appConfig }: AppProps) {
+export function App({ appConfig }: AppProps) {  
   return (
     <SessionProvider appConfig={appConfig}>
       <main className="grid h-svh grid-cols-1 place-content-center">

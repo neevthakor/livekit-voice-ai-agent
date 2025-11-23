@@ -6,9 +6,10 @@ import { useRoomContext } from '@livekit/components-react';
 import { useSession } from '@/components/app/session-provider';
 import { SessionView } from '@/components/app/session-view';
 import { WelcomeView } from '@/components/app/welcome-view';
+import OrderReceipt from '@/components/OrderReceipt';
 
-const MotionWelcomeView = motion.create(WelcomeView);
-const MotionSessionView = motion.create(SessionView);
+const MotionWelcomeView = motion.create(WelcomeView) as any;
+const MotionSessionView = motion.create(SessionView) as any;
 
 const VIEW_MOTION_PROPS = {
   variants: {
@@ -44,25 +45,30 @@ export function ViewController() {
   };
 
   return (
-    <AnimatePresence mode="wait">
-      {/* Welcome screen */}
-      {!isSessionActive && (
-        <MotionWelcomeView
-          key="welcome"
-          {...VIEW_MOTION_PROPS}
-          startButtonText={appConfig.startButtonText}
-          onStartCall={startSession}
-        />
-      )}
-      {/* Session view */}
-      {isSessionActive && (
-        <MotionSessionView
-          key="session-view"
-          {...VIEW_MOTION_PROPS}
-          appConfig={appConfig}
-          onAnimationComplete={handleAnimationComplete}
-        />
-      )}
-    </AnimatePresence>
+    <>
+      <AnimatePresence mode="wait">
+        {/* Welcome screen */}
+        {!isSessionActive && (
+          <MotionWelcomeView
+            key="welcome"
+            {...VIEW_MOTION_PROPS}
+            startButtonText={appConfig.startButtonText}
+            onStartCall={startSession}
+          />
+        )}
+        {/* Session view */}
+        {isSessionActive && (
+          <MotionSessionView
+            key="session-view"
+            {...VIEW_MOTION_PROPS}
+            appConfig={appConfig}
+            onAnimationComplete={handleAnimationComplete}
+          />
+        )}
+      </AnimatePresence>
+      
+      {/* Order Receipt - Only show when session is active */}
+      {isSessionActive && <OrderReceipt />}
+    </>
   );
 }

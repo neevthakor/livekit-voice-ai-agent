@@ -1,0 +1,12 @@
+livekit>=0.22
+livekit-agents>=1.3.3
+livekit-plugins-silero>=1.3.3
+livekit-plugins-deepgram>=1.3.3
+livekit-plugins-google>=1.3.3
+livekit-plugins-noise-cancellation>=0.2.5
+
+python-dotenv
+protobuf>=4.25
+numpy
+aiohttp
+requests
