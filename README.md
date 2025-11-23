@@ -79,15 +79,16 @@ http://localhost:3000
 
 root/
 ├── backend/
-│ ├── src/agent.py
+│ ├── src/
+│ │ └── agent.py
 │ ├── orders/
-│ ├── requirements.txt
+│ └── requirements.txt
 │
 ├── frontend/
 │ ├── app/
 │ ├── components/
 │ │ └── OrderReceipt.tsx
-│ ├── page.tsx
+│ └── page.tsx
 │
 ├── README.md
 └── .gitignore
