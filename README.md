@@ -138,7 +138,7 @@ NEXT_PUBLIC_AGENT_NAME=wellness-companion
 
 ```bash
 cd backend
-python src/agent.py dev
+python src/agent.py start
 ```
 
 **For Day 3 (Wellness Companion):**
