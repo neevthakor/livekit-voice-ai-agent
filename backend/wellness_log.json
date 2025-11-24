@@ -1,0 +1,31 @@
+[
+  {
+    "date": "2025-11-24",
+    "timestamp": "2025-11-24T08:55:51.521492",
+    "mood": "lazy",
+    "energy": "medium",
+    "objectives": [
+      "reading",
+      "improving study habits"
+    ],
+    "summary": "User feeling lazy with medium energy, focusing on reading and improving study habits."
+  },
+  {
+    "date": "2025-11-24",
+    "timestamp": "2025-11-24T09:08:52.829539",
+    "mood": "angry",
+    "energy": "high",
+    "objectives": [],
+    "summary": "User feeling angry with high energy, focusing on no specific goals."
+  },
+  {
+    "date": "2025-11-24",
+    "timestamp": "2025-11-24T09:16:48.368742",
+    "mood": "happy",
+    "energy": "low",
+    "objectives": [
+      "take a bath"
+    ],
+    "summary": "User feeling happy with low energy, focusing on taking a bath."
+  }
+]

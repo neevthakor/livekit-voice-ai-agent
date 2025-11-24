@@ -7,6 +7,7 @@ import { useSession } from '@/components/app/session-provider';
 import { SessionView } from '@/components/app/session-view';
 import { WelcomeView } from '@/components/app/welcome-view';
 import OrderReceipt from '@/components/OrderReceipt';
+import WellnessCheckIn from '@/components/WellnessCheckIn';
 
 const MotionWelcomeView = motion.create(WelcomeView) as any;
 const MotionSessionView = motion.create(SessionView) as any;
@@ -67,8 +68,9 @@ export function ViewController() {
         )}
       </AnimatePresence>
       
-      {/* Order Receipt - Only show when session is active */}
-      {isSessionActive && <OrderReceipt />}
+      {/* Show different UI based on which agent is running */}
+      {isSessionActive && appConfig.agentName === 'wellness-companion' && <WellnessCheckIn />}
+      {isSessionActive && appConfig.agentName === 'myagent' && <OrderReceipt />}
     </>
   );
 }
